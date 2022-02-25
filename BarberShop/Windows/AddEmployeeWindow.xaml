@@ -6,7 +6,8 @@
         xmlns:local="clr-namespace:BarberShop.Windows"
         mc:Ignorable="d"
         Title="AddEmployeeWindow" 
-        Height="450" Width="600">
+        Height="450" Width="600"
+        WindowStartupLocation="CenterScreen">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="50"/>
@@ -26,7 +27,7 @@
         </Grid.ColumnDefinitions>
 
         <!-- Заголовок -->
-        <TextBlock Text="Список сотрудников"
+        <TextBlock x:Name="tbTitle" Text="Добавление нового сотрудника"
                    HorizontalAlignment="Center"
                    VerticalAlignment="Center"
                    FontSize="30"

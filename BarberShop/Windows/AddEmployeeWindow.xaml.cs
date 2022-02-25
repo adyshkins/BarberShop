@@ -20,17 +20,47 @@ namespace BarberShop.Windows
     /// </summary>
     public partial class AddEmployeeWindow : Window
     {
+
+        EF.Employee editEmployee = new EF.Employee();
+
+        bool isEdit = true;
+
         public AddEmployeeWindow()
         {
             InitializeComponent();
             cmbSpec.ItemsSource = ClassHelper.AppData.context.Specialization.ToList();
             cmbSpec.DisplayMemberPath = "NameSpecialization";
             cmbSpec.SelectedIndex = 0;
+
+            isEdit = false;
         }
 
-        private void btnAddEmpl_Click(object sender, RoutedEventArgs e)
+        public AddEmployeeWindow(EF.Employee employee)
+        {
+            InitializeComponent();
+
+            cmbSpec.ItemsSource = ClassHelper.AppData.context.Specialization.ToList();
+            cmbSpec.DisplayMemberPath = "NameSpecialization";
+            cmbSpec.SelectedIndex = Convert.ToInt32(employee.IdSpecialization - 1);
+
+            txtFirsttName.Text = employee.FirstName;
+            txtLastName.Text = employee.LastName;
+            txtPhone.Text = employee.Phone;
+            txtLogin.Text = employee.Login;
+            txtPassword.Password = employee.Password;
+
+            tbTitle.Text = "Изменение данных работника";
+
+            btnAddEmpl.Content = "Изменить";
+
+            editEmployee = employee;
+            isEdit = true;
+        }
+
+            private void btnAddEmpl_Click(object sender, RoutedEventArgs e)
         {
             // Проверка на пустоту
+            
 
             if (string.IsNullOrWhiteSpace(txtLastName.Text))
             {
@@ -97,25 +127,41 @@ namespace BarberShop.Windows
 
             var resClick = MessageBox.Show("Вы уверены?", "Подтверждение", MessageBoxButton.YesNo, MessageBoxImage.Question);
 
-
             try
             {
                 if (resClick == MessageBoxResult.Yes)
                 {
 
-                    EF.Employee addEployee = new EF.Employee();
-                    addEployee.FirstName = txtFirsttName.Text;
-                    addEployee.LastName = txtLastName.Text;
-                    addEployee.IdSpecialization = cmbSpec.SelectedIndex + 1;
-                    addEployee.Phone = txtPhone.Text;
-                    addEployee.Login = txtLogin.Text;
-                    addEployee.Password = txtPassword.Password;
+                    if (isEdit)
+                    {
+                        editEmployee.FirstName = txtFirsttName.Text;
+                        editEmployee.LastName = txtLastName.Text;
+                        editEmployee.IdSpecialization = cmbSpec.SelectedIndex + 1;
+                        editEmployee.Phone = txtPhone.Text;
+                        editEmployee.Login = txtLogin.Text;
+                        editEmployee.Password = txtPassword.Password;
 
-                    ClassHelper.AppData.context.Employee.Add(addEployee);
-                    ClassHelper.AppData.context.SaveChanges();
+                        ClassHelper.AppData.context.SaveChanges();
 
-                    MessageBox.Show("Пользователь успещно добавлен", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
-                    this.Close();
+                        MessageBox.Show("Пользователь успещно изменен", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
+                        this.Close();
+                    }
+                    else
+                    {
+                        EF.Employee addEployee = new EF.Employee();
+                        addEployee.FirstName = txtFirsttName.Text;
+                        addEployee.LastName = txtLastName.Text;
+                        addEployee.IdSpecialization = cmbSpec.SelectedIndex + 1;
+                        addEployee.Phone = txtPhone.Text;
+                        addEployee.Login = txtLogin.Text;
+                        addEployee.Password = txtPassword.Password;
+
+                        ClassHelper.AppData.context.Employee.Add(addEployee);
+                        ClassHelper.AppData.context.SaveChanges();
+
+                        MessageBox.Show("Пользователь успещно добавлен", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
+                        this.Close();
+                    }
                 }
             }
             catch (Exception ex)

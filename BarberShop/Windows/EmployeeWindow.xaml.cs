@@ -98,6 +98,51 @@ namespace BarberShop.Windows
         {
             Filter();
         }
+
+        private void lvEmployee_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Delete || e.Key == Key.Back)
+            {
+
+                var resClick = MessageBox.Show($"Удалить пользователя {(lvEmployee.SelectedItem as EF.Employee).LastName}?", "Подтверждение", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                try
+                {
+                    if (resClick == MessageBoxResult.Yes)
+                    {
+
+                        EF.Employee userDel = new EF.Employee();
+
+                        if (!(lvEmployee.SelectedItem is EF.Employee))
+                        {
+                            MessageBox.Show("Запись не выбрана");
+                            return;
+                        }
+                        userDel = (lvEmployee.SelectedItem as EF.Employee);
+
+                        ClassHelper.AppData.context.Employee.Remove(userDel);
+                        ClassHelper.AppData.context.SaveChanges();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+
+                MessageBox.Show($"Пользователь успешно удален", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
+
+            }
+
+            Filter();
+        }
+
+        private void lvEmployee_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+
+            EF.Employee userEdit = lvEmployee.SelectedItem as EF.Employee;
+
+            AddEmployeeWindow addEmployeeWindow = new AddEmployeeWindow(userEdit);
+            addEmployeeWindow.ShowDialog();
+            Filter();
+        }
     }
 }
-// // // // // 
