@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using BarberShop.ClassHelper;
+using Microsoft.Win32;
 
 namespace BarberShop.Windows
 {
@@ -22,8 +24,8 @@ namespace BarberShop.Windows
     {
 
         EF.Employee editEmployee = new EF.Employee();
-
         bool isEdit = true;
+        private string pathPhoto = null;
 
         public AddEmployeeWindow()
         {
@@ -50,8 +52,23 @@ namespace BarberShop.Windows
             txtPassword.Password = employee.Password;
 
             tbTitle.Text = "Изменение данных работника";
-
             btnAddEmpl.Content = "Изменить";
+
+            // вывод изображения из БД в Image
+            if (employee.Photo != null)
+            {
+                using (MemoryStream stream = new MemoryStream(employee.Photo))
+                {
+                    BitmapImage bitmapImage = new BitmapImage();
+                    bitmapImage.BeginInit();
+                    bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
+                    bitmapImage.CreateOptions = BitmapCreateOptions.PreservePixelFormat;
+                    bitmapImage.StreamSource = stream;
+                    bitmapImage.EndInit();
+                    photoUser.Source = bitmapImage;
+                }
+
+            }
 
             editEmployee = employee;
             isEdit = true;
@@ -102,27 +119,27 @@ namespace BarberShop.Windows
 
             // Проверка на уникальность телефона
 
-            var userAuth = AppData.context.Employee.ToList().
-                Where(i => i.Phone == txtPhone.Text).
-                FirstOrDefault();
+            //var userAuth = AppData.context.Employee.ToList().
+            //    Where(i => i.Phone == txtPhone.Text).
+            //    FirstOrDefault();
 
-            if (userAuth != null)
-            {
-                MessageBox.Show("Данный номер телефона уже есть в системе", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
-            }
+            //if (userAuth != null)
+            //{
+            //    MessageBox.Show("Данный номер телефона уже есть в системе", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            //    return;
+            //}
 
             // Проверка на уникальность Логина
 
-            var userAuthLogin = AppData.context.Employee.ToList().
-                Where(i => i.Login == txtLogin.Text).
-                FirstOrDefault();
+            //var userAuthLogin = AppData.context.Employee.ToList().
+            //    Where(i => i.Login == txtLogin.Text).
+            //    FirstOrDefault();
 
-            if (userAuth != null)
-            {
-                MessageBox.Show("Данный Логин зянят", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
-            }
+            //if (userAuth != null)
+            //{
+            //    MessageBox.Show("Данный Логин зянят", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            //    return;
+            //}
 
 
             var resClick = MessageBox.Show("Вы уверены?", "Подтверждение", MessageBoxButton.YesNo, MessageBoxImage.Question);
@@ -134,12 +151,18 @@ namespace BarberShop.Windows
 
                     if (isEdit)
                     {
+                        // изменение
                         editEmployee.FirstName = txtFirsttName.Text;
                         editEmployee.LastName = txtLastName.Text;
                         editEmployee.IdSpecialization = cmbSpec.SelectedIndex + 1;
                         editEmployee.Phone = txtPhone.Text;
                         editEmployee.Login = txtLogin.Text;
                         editEmployee.Password = txtPassword.Password;
+                        if (pathPhoto != null)
+                        {
+                            editEmployee.Photo = File.ReadAllBytes(pathPhoto);
+                        }
+                       
 
                         ClassHelper.AppData.context.SaveChanges();
 
@@ -148,6 +171,7 @@ namespace BarberShop.Windows
                     }
                     else
                     {
+                        // добавление
                         EF.Employee addEployee = new EF.Employee();
                         addEployee.FirstName = txtFirsttName.Text;
                         addEployee.LastName = txtLastName.Text;
@@ -155,7 +179,10 @@ namespace BarberShop.Windows
                         addEployee.Phone = txtPhone.Text;
                         addEployee.Login = txtLogin.Text;
                         addEployee.Password = txtPassword.Password;
-
+                        if (pathPhoto != null)
+                        {
+                            editEmployee.Photo = File.ReadAllBytes(pathPhoto);
+                        }
                         ClassHelper.AppData.context.Employee.Add(addEployee);
                         ClassHelper.AppData.context.SaveChanges();
 
@@ -170,6 +197,16 @@ namespace BarberShop.Windows
             }
 
          
+        }
+
+        private void btnChoosePhoto_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openFile = new OpenFileDialog();
+            if (openFile.ShowDialog() == true)
+            {
+                photoUser.Source = new BitmapImage(new Uri(openFile.FileName));
+                pathPhoto = openFile.FileName;
+            }
         }
     }
 }

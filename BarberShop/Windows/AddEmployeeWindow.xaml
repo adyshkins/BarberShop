@@ -6,11 +6,16 @@
         xmlns:local="clr-namespace:BarberShop.Windows"
         mc:Ignorable="d"
         Title="AddEmployeeWindow" 
-        Height="450" Width="600"
+        Height="700" 
+        Width="600"
         WindowStartupLocation="CenterScreen">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="50"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
             <RowDefinition Height="1*"/>
             <RowDefinition Height="1*"/>
             <RowDefinition Height="1*"/>
@@ -156,13 +161,45 @@
 
         <Button x:Name="btnAddEmpl"
                 Grid.Column="0"
-                Grid.Row="8"
+                Grid.Row="12"
                 Grid.ColumnSpan="2"
                 Width="150"
                 Height="40"
                 Content="Добавить"
                 FontSize="18"
                 Click="btnAddEmpl_Click"/>
+        
+        <!-- Область для фото -->
 
+        <Border Grid.Column="0"
+                Grid.Row="8"
+                Grid.ColumnSpan="2"
+                Grid.RowSpan="3"
+                Width="150"
+                Height="150"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                BorderThickness="2"
+                BorderBrush="DarkGray"
+                CornerRadius="20"
+                Background="LightGray">
+
+            <Image x:Name="photoUser"/>
+
+        </Border>
+        
+        <Button x:Name="btnChoosePhoto"
+                Grid.Column="0"
+                Grid.Row="11"
+                Grid.ColumnSpan="2"
+                Width="150"
+                Height="40"
+                Content="Выбрать фото"
+                FontSize="18"
+                Background="{x:Null}"
+                BorderThickness="0"
+                VerticalContentAlignment="Top"
+                Click="btnChoosePhoto_Click"/>
+        
     </Grid>
 </Window>
